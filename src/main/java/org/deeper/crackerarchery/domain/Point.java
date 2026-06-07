@@ -1,4 +1,4 @@
-package org.deeper.crackerarchery;
+package org.deeper.crackerarchery.domain;
 
 public class Point {
     double x;

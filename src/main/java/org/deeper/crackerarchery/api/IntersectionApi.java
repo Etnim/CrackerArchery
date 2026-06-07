@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Intersection API", description = "Operations for checking cracker and arrow interactions")
-@RequestMapping("/api/intersection")
+@RequestMapping("/archery")
 public interface IntersectionApi {
 
     /**
@@ -48,7 +48,7 @@ public interface IntersectionApi {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))
             )
     })
-    @GetMapping("/check")
+    @GetMapping("/intersection/check")
     IntersectionResponse checkIntersection(IntersectionRequest request);
 
 
@@ -78,6 +78,6 @@ public interface IntersectionApi {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))
             )
     })
-    @GetMapping("/stats/request-count")
+    @GetMapping("/stats/requests")
     RequestCountResponse getRequestCount();
 }
