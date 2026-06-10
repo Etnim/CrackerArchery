@@ -1,6 +1,6 @@
 package org.deeper.archery.domain;
 
-public class Point {
-    double x;
-    double y;
-}
+public record Point(
+        double x,
+        double y
+) {}

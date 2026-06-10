@@ -2,7 +2,7 @@ package org.deeper.archery;
 
 import org.deeper.archery.api.model.Point;
 import org.deeper.archery.api.model.request.ArrowRequest;
-import org.deeper.archery.api.model.request.CrackerRequest;
+import org.deeper.archery.api.model.request.SquareTargetRequest;
 import org.deeper.archery.api.model.request.IntersectionRequest;
 import org.deeper.archery.api.model.response.RequestCountResponse;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,9 +43,8 @@ public class IntersectionApiControllerIntegrationTest {
     private TestRestTemplate authenticatedRestTemplate;
 
     private static final String GET_ACTIVE_REQUESTS_ENDPOINT = "archery/stats/requests";
-    private static final String GET_INTERSECTION_CHECK_ENDPOINT = "archery/intersection/check";
+    private static final String POST_INTERSECTION_CHECK_ENDPOINT = "archery/intersection/check";
     private static final int CONCURRENT_REQUEST_COUNT = 5;
-
 
     @BeforeAll
     static void createCredentialFiles() throws IOException {
@@ -129,21 +129,22 @@ public class IntersectionApiControllerIntegrationTest {
     }
 
     private ResponseEntity<String> sendCheckIntersectionRequest(IntersectionRequest request) {
-       return restTemplate.exchange(
-                GET_INTERSECTION_CHECK_ENDPOINT,
-                HttpMethod.GET,
+        return restTemplate.exchange(
+                POST_INTERSECTION_CHECK_ENDPOINT,
+                HttpMethod.POST,
                 new HttpEntity<>(request),
                 String.class
         );
     }
 
-     private IntersectionRequest buildIntersectionRequest() {
+    private IntersectionRequest buildIntersectionRequest() {
         return new IntersectionRequest(
-                new CrackerRequest(
-                        new Point(0.0, 4.0),
-                        new Point(4.0, 4.0),
-                        new Point(0.0, 0.0),
-                        new Point(4.0, 0.0)
+                new SquareTargetRequest(
+                        List.of(new Point(0.0, 1.0),
+                                new Point(1.0, 1.0),
+                                new Point(1.0, 0.0),
+                                new Point(0.0, 0.0))
+
                 ),
                 new ArrowRequest(
                         new Point(-1.0, 2.0),

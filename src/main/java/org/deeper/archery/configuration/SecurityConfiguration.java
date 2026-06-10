@@ -1,10 +1,11 @@
-package org.deeper.archery.security;
+package org.deeper.archery.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,8 +28,6 @@ public class SecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) throws IOException {
-        System.out.println(readFile(usernameFile));
-        System.out.println(readFile(passwordFile));
         UserDetails reviewer = User
                 .withUsername(readFile(usernameFile))
                 .password(encoder.encode(readFile(passwordFile)))
@@ -42,8 +41,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(authorize -> {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/archery/intersection/check").permitAll();
                     authorize.requestMatchers("/archery/stats/requests").authenticated();
                     authorize.anyRequest().denyAll();

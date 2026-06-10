@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import org.deeper.archery.api.model.Point;
 
 public record ArrowRequest(
-  @Valid @NotNull Point start,
-  @Valid @NotNull Point end
+ @NotNull(message = "Start point coordinate is required") @Valid Point start,
+ @NotNull(message = "End point coordinate is required") @Valid Point end
 ) {}

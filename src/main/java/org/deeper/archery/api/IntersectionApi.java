@@ -11,20 +11,21 @@ import org.deeper.archery.api.model.response.IntersectionResponse;
 import org.deeper.archery.api.model.response.RequestCountResponse;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Intersection API", description = "Operations for checking cracker and arrow interactions")
+@Tag(name = "Intersection API", description = "Operations for checking target and arrow interactions")
 @RequestMapping("/archery")
 public interface IntersectionApi {
 
     /**
-     * Checks how a given arrow (line) interacts with a cracker target (square).
+     * Checks how a given arrow (line) interacts with a target target (square).
      *
      * @param request contains the coordinates of the square and the line
      * @return list of intersection points
      */
     @Operation(
-            summary = "Check cracker-arrow interaction",
+            summary = "Check target-arrow interaction",
             description = """
                     Returns list of points where an arrow (line segment)
                     intersects with a target (square) based on provided coordinates.
@@ -48,7 +49,7 @@ public interface IntersectionApi {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))
             )
     })
-    @GetMapping("/intersection/check")
+    @PostMapping("/intersection/check")
     IntersectionResponse checkIntersection(IntersectionRequest request);
 
 

@@ -14,7 +14,6 @@
 - [Getting Started](#getting-started)
 - [Endpoints](#endpoints)
 - [Error Handling](#error-handling)
-- [Project Structure](#project-structure)
 
 ---
 
@@ -31,6 +30,7 @@ CrackerArchery exposes two endpoints:
 
 ```
 HTTP Request
+→ Interceptor
     → IntersectionController  (receives and validates input format)
         → Mapper              (converts API model → domain model)
             → IntersectionService  (executes business logic and validation)
@@ -39,15 +39,15 @@ HTTP Request
 
 ### Layer Responsibilities
 
-| Layer | Responsibility |
-|---|---|
-| `api/controller` | Receives HTTP requests, delegates to service |
-| `api/model` | Request/response shapes with input validation annotations |
-| `service` | Business logic, geometric calculations, domain validation |
-| `domain` | Pure models — no Spring, no annotations, no framework dependencies |
-| `exception` | Centralized error handling via `GlobalExceptionHandler` |
-| `security` | Basic Auth configuration via Spring Security |
-| `interceptor` | Request lifecycle monitoring, collection of runtime request metrics (e.g., tracking currently processed requests)|
+| Layer            | Responsibility                                                                                                    |
+|------------------|-------------------------------------------------------------------------------------------------------------------|
+| `api/controller` | Receives HTTP requests, delegates to service                                                                      |
+| `api/model`      | Request/response shapes with input validation annotations                                                         |
+| `service`        | Business logic, geometric calculations, domain validation                                                         |
+| `domain`         | Pure models — no Spring, no annotations, no framework dependencies                                                |
+| `exception`      | Centralized error handling via `GlobalExceptionHandler`                                                           |
+| `security`       | Basic Auth configuration via Spring Security                                                                      |
+| `interceptor`    | Request lifecycle monitoring, collection of runtime request metrics (e.g., tracking currently processed requests) |
 
 ---
 
@@ -79,8 +79,8 @@ HTTP Request
 
 To run the application locally, request the credential files from the project author and set the following environment variables pointing to their location on your machine:
 
-| Variable | Description |
-|---|---|
+| Variable        | Description                                       |
+|-----------------|---------------------------------------------------|
 | `USERNAME_FILE` | Absolute path to the file containing the username |
 | `PASSWORD_FILE` | Absolute path to the file containing the password |
 
@@ -102,24 +102,26 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Endpoints
 
-| Method | Path | Access | Description |
-|---|---|---|---|
-| `GET` | `/archery/intersection/check` | Public | Returns intersection points between arrow and cracker |
-| `GET` | `/archery/stats/request-count` | 🔒 Basic Auth | Returns total processed request count since startup |
+| Method | Path                          | Access        | Description                                           |
+|--------|-------------------------------|---------------|-------------------------------------------------------|
+| `GET`  | `/archery/intersection/check` | Public        | Returns intersection points between arrow and cracker |
+| `GET`  | `/archery/stats/requests`     | 🔒 Basic Auth | Returns total processed request count since startup   |
 
 ### Example Request — Intersection Check
 
 ```json
 {
-  "cracker": {
-    "topLeft":     { "x": 0.0, "y": 4.0 },
-    "topRight":    { "x": 4.0, "y": 4.0 },
-    "bottomLeft":  { "x": 0.0, "y": 0.0 },
-    "bottomRight": { "x": 4.0, "y": 0.0 }
+  "target": {
+    "points": [
+      { "x": 0.0, "y": 1.0 },
+      { "x": 1.0, "y": 1.0 },
+      { "x": 1.0, "y": 0.0 },
+      { "x": 0.0, "y": 0.0 }
+    ]
   },
   "arrow": {
-    "start": { "x": -1.0, "y": 2.0 },
-    "end":   { "x": 5.0,  "y": 2.0 }
+    "start": { "x": -1.0, "y": 0.5 },
+    "end": { "x": 2.0, "y": 0.5 }
   }
 }
 ```
@@ -151,10 +153,10 @@ All errors return an RFC 7807 `ProblemDetail` response:
 }
 ```
 
-| Status | Cause |
-|---|---|
-| `400` | Invalid input format or coordinates do not form valid geometric shapes |
-| `401` | Missing or invalid credentials on protected endpoint |
-| `500` | Unexpected server error |
+| Status | Cause                                                                  |
+|--------|------------------------------------------------------------------------|
+| `400`  | Invalid input format or coordinates do not form valid geometric shapes |
+| `401`  | Missing or invalid credentials on protected endpoint                   |
+| `500`  | Unexpected server error                                                |
 
 ---
