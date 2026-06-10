@@ -19,9 +19,9 @@
 
 ## Overview
 
-CrackerArchery exposes two endpoints:
+Archery exposes two endpoints:
 
-- A **public** endpoint that accepts coordinates of a square (cracker) and a line segment (arrow) and returns their intersection points.
+- A **public** endpoint that accepts coordinates of a square (target) and a line segment (arrow) and returns their intersection points.
 - A **protected** endpoint that returns information about how many requests are currently being processed by the application.
 
 ---
@@ -34,7 +34,7 @@ HTTP Request
     → IntersectionController  (receives and validates input format)
         → Mapper              (converts API model → domain model)
             → IntersectionService  (executes business logic and validation)
-                → Domain      (pure geometric models: Target, Cracker, Arrow, Point)
+                → Domain      (pure geometric models: SquareTarget, Arrow, Point)
 ```
 
 ### Layer Responsibilities
@@ -44,27 +44,26 @@ HTTP Request
 | `api/controller` | Receives HTTP requests, delegates to service                                                                      |
 | `api/model`      | Request/response shapes with input validation annotations                                                         |
 | `service`        | Business logic, geometric calculations, domain validation                                                         |
-| `domain`         | Pure models — no Spring, no annotations, no framework dependencies                                                |
+| `domain`         | Pure models                                                                                                       |
 | `exception`      | Centralized error handling via `GlobalExceptionHandler`                                                           |
-| `security`       | Basic Auth configuration via Spring Security                                                                      |
+| `confuguarion`   | Basic Auth configuration via Spring Security and Web configuration needed for interceptor                         |
 | `interceptor`    | Request lifecycle monitoring, collection of runtime request metrics (e.g., tracking currently processed requests) |
 
 ---
 
 ## Tech Stack
 
-| Library                | Version           | Why                                                                                     |
-|------------------------|-------------------|-----------------------------------------------------------------------------------------|
-| Spring Boot            | 4.0.6             | Production-grade application framework with minimal setup                               |
-| Spring MVC             | 4.0.6             | REST API implementation and request processing;                                         |
-| Spring Security        | 7.0.5             | Industry standard for securing endpoints;                                               |
-| SpringDoc OpenAPI      | 2.5.0             | Auto-generates Swagger UI from annotations — no manual API docs maintenance             |
-| Spring `ProblemDetail` | built-in          | Standardized RFC 7807 error responses                                                   |
-| Lombok                 | 1.18.x            | Eliminates boilerplate; keeps domain models concise                                     |
-| Lombok                 | Latest compatible | Used for request/response models to enforce immutability and reduce noise               |
-| Java                   | 21                | Modern language features and improved runtime performance                               |
-| Spring Test            | 4.0.6             | Supports controller, integration, and security testing through Spring testing utilities |
-| Mockito                | 5.11.0            | Mocking framework for isolated tests                                                    |
+| Library                 | Version        | Why                                                                                     |
+|-------------------------|----------------|-----------------------------------------------------------------------------------------|
+| Spring Boot             | 4.0.6          | Production-grade application framework with minimal setup                               |
+| Spring MVC              | 4.0.6          | REST API implementation and request processing;                                         |
+| Spring Security         | 7.0.5          | Industry standard for securing endpoints;                                               |
+| SpringDoc OpenAPI       | 2.5.0          | Auto-generates Swagger UI from annotations — no manual API docs maintenance             |
+| Spring `ProblemDetail`  | built-in       | Standardized RFC 7807 error responses                                                   |
+| Lombok                  | 1.18.x         | Eliminates boilerplate; keeps domain models concise                                     |
+| Java                    | 21             | Modern language features and improved runtime performance                               |
+| Spring Test             | 4.0.6          | Supports controller, integration, and security testing through Spring testing utilities |
+| Spring TestRestTemplate | 4.0.6          | End-to-end HTTP testing of REST endpoints                                               |
 
 ---
 
@@ -104,7 +103,7 @@ http://localhost:8080/swagger-ui/index.html
 
 | Method | Path                          | Access        | Description                                           |
 |--------|-------------------------------|---------------|-------------------------------------------------------|
-| `GET`  | `/archery/intersection/check` | Public        | Returns intersection points between arrow and cracker |
+| `POST` | `/archery/intersection/check` | Public        | Returns intersection points between arrow and cracker |
 | `GET`  | `/archery/stats/requests`     | 🔒 Basic Auth | Returns total processed request count since startup   |
 
 ### Example Request — Intersection Check
